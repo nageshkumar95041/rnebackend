@@ -353,7 +353,7 @@ router.patch("/serviceManRegisterFeedback/:id", async(req,res)=>{
     }
 })
 
-const client = require('twilio')("ACa7a92254ead4b50da4fe8764c3623531","829eb6521b6dff87c1170eb0d413bac9");
+const client = require('twilio')(process.env.ACCOUNTSID,process.env.AUTHTOKEN);
 router.post("/sendSmsToServiceMan",async(req,res)=>{
     try{
 
