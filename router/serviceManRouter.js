@@ -78,8 +78,8 @@ router.post("/serviceManRegister",upload.single('image'),async(req,res)=>{
     try{
 
         
-        const {name,email,userName,skill,city,text,password}=req.body
-        if(!name || !email || !userName || !skill || !text || !password || !city){
+        const {name,email,userName,PhoneNo,skill,city,text,password}=req.body
+        if(!name || !email || !userName || !PhoneNo|| !skill || !text || !password || !city){
             res.json("please fill the required field")
         }
 
@@ -91,7 +91,7 @@ router.post("/serviceManRegister",upload.single('image'),async(req,res)=>{
             // check userName existence
             
             const cloudRes= await cloudinary.uploader.upload(req.file.path)
-            const {name,email,userName,skill,city,password}=req.body
+            const {name,email,userName,PhoneNo,skill,city,password}=req.body
             const userNameExit= await serviceMancoll.findOne({userName})
             if(userNameExit){
                
@@ -100,7 +100,7 @@ router.post("/serviceManRegister",upload.single('image'),async(req,res)=>{
             else{
 
 
-                const serviceMan= new serviceMancoll({name:name,email:email,userName:userName,skill:skill,city:city,text:text,password:password,profile_pic:cloudRes.secure_url,cloudinary_id:cloudRes.public_id})
+                const serviceMan= new serviceMancoll({name:name,email:email,userName:userName,PhoneNo:PhoneNo,skill:skill,city:city,text:text,password:password,profile_pic:cloudRes.secure_url,cloudinary_id:cloudRes.public_id})
                 const result= await serviceMan.save();
                 res.status(201).json({
                     message:"serviceMan registered",
@@ -314,21 +314,38 @@ router.delete("/userRegistered/:id",async(req,res)=>{
 router.patch("/serviceManRegister/:id", upload.single('image'), async(req,res)=>{
     try{
         const _id=req.params.id
-        const {name,email,userName,skill,password}=req.body 
+        const {name,userName,email,skill,city,profile_pic,cloudinary_id,text,password}=req.body 
         const serviceMan=  await serviceMancoll.findById(_id)
         await cloudinary.uploader.destroy(serviceMan.cloudinary_id)
         const result= await cloudinary.uploader.upload(req.file.path);
 
         const data={
-            name:req.name,
-            email:email,
+            name:name,
             userName:userName,
+            email:email,
             skill:skill,
+            city:city,
             profile_pic:result.secure_url,
             cloudinary_id:result.public_id,
+            text:text,
             password:password
         }
         const updatedData=await serviceMancoll.findByIdAndUpdate(_id,data,{new:true})
+
+      res.status(201).json(updatedData)
+    }catch(err){
+        res.status(404).json(err)
+    }
+})
+// handle feedback request
+router.patch("/serviceManRegisterFeedback/:id", async(req,res)=>{
+    try{
+        const _id=req.params.id
+        const {name,userName}=req.body 
+        const serviceMan=  await serviceMancoll.findById(_id)
+       
+
+        const updatedData=await serviceMancoll.findByIdAndUpdate(_id,{$push:{feedbacks:{name:name,comment:userName}}})
 
       res.status(201).json(updatedData)
     }catch(err){

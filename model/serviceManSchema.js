@@ -17,6 +17,10 @@ const serviceManSchema= new mongoose.Schema({
         type:String,
         trim:true
     },
+    PhoneNo:{
+        type:Number,
+        trim:true
+    },
     skill:{
         type:String,
         trim:true
@@ -50,7 +54,30 @@ const serviceManSchema= new mongoose.Schema({
                 required:true
             }
         }
-    ]
+    ],
+
+    feedbacks: [
+        {
+            name:{
+                type:String,
+                trim:true
+            },
+        //   rating: {
+        //     type: Number,
+        //     min: 1,
+        //     max: 5
+        //   },
+          comment: {
+            type: String,
+            trim:true
+          
+          },
+          createdAt: {
+            type: Date,
+            default: Date.now
+          }
+        }
+      ]
 })
 
 serviceManSchema.methods.generateAuthToken= async function(){
