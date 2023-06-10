@@ -358,7 +358,7 @@ router.post("/sendSmsToServiceMan",async(req,res)=>{
     try{
 
      const {name,message}=req.body;
-const client = require('twilio')(process.env.TWILIO_ACCOUNT_SID,process.env.TWILIO_AUTH_TOKEN);
+const client = require('twilio')(process.env.ACCOUNT_SID,process.env.AUTH_TOKEN);
 
 
 client.messages
